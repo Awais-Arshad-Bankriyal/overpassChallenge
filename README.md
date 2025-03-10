@@ -60,7 +60,7 @@ src/
 
 ```bash
 git clone <repository-url>
-cd nestjs-overpass-challenge
+cd <dir>
 ```
 
 ### Install Dependencies
