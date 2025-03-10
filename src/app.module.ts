@@ -11,5 +11,6 @@ import { CacheModule } from './cache/cache.module';
     CacheModule,
     LandmarksModule,
   ],
+  
 })
 export class AppModule {}

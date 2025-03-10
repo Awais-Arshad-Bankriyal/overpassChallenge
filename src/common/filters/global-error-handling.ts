@@ -18,17 +18,17 @@ import {
       let status = HttpStatus.INTERNAL_SERVER_ERROR;
       let message = 'Internal server error';
   
-      // Handle HttpException (e.g., validation errors, unauthorized access)
+     
       if (exception instanceof HttpException) {
         status = exception.getStatus();
         message = exception.getResponse() as string;
       }
-      // Handle TypeORM QueryFailedError (SQLite errors)
+      
       else if (exception instanceof QueryFailedError) {
-        status = HttpStatus.BAD_REQUEST; // Default status for database errors
+        status = HttpStatus.BAD_REQUEST; 
         message = this.handleDatabaseError(exception);
       }
-      // Handle generic errors
+     
       else if (exception instanceof Error) {
         message = exception.message;
       }
@@ -42,11 +42,11 @@ import {
     }
   
     private handleDatabaseError(exception: QueryFailedError): string {
-      // Check for SQLite error codes or messages
-      const errorCode = (exception as any).code; // SQLite error code
+      
+      const errorCode = (exception as any).code;
       const errorMessage = exception.message;
   
-      // Handle specific SQLite errors
+      
       if (errorCode === 'SQLITE_CONSTRAINT') {
         if (errorMessage.includes('UNIQUE constraint failed')) {
           return 'Duplicate entry: A record with the same unique key already exists.';
@@ -57,7 +57,7 @@ import {
         }
       }
   
-      // Default database error message
+      
       return 'Database error: An error occurred while processing your request.';
     }
   }

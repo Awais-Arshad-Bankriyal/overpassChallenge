@@ -9,7 +9,7 @@ export class LandmarksController {
 
   @Post('webhook')
   async createLandmark(
-    @Body() createLandmarkDto: CreateLandmarkDto, // Validates the request body
+    @Body() createLandmarkDto: CreateLandmarkDto, 
     @Headers('Authorization') authHeader: string,
   ) {
     if (authHeader !== 'secret') {
@@ -19,8 +19,9 @@ export class LandmarksController {
   }
   
   @Get()
-  async getLandmarks(@Query() getLandmarksDto: GetLandmarksDto) { // Validates the query parameters
+  async getLandmarks(@Query() getLandmarksDto: GetLandmarksDto) {
     
     return this.landmarksService.getLandmarks(getLandmarksDto);
+
   }
 }

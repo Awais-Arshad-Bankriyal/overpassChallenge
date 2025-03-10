@@ -20,23 +20,23 @@ export class LandmarksService {
     const { lat, lng } = createLandmarkDto;
     const cacheKey = `landmarks:${lat}:${lng}`;
 
-    // Check cache first
+    
     const cachedLandmarks = await this.cacheService.get(cacheKey);
     if (cachedLandmarks) {
       return cachedLandmarks;
     }
 
-    // Fetch landmarks from Overpass API
+  
     const landmarks = await this.overpassService.getNearbyLandmarks(lat, lng);
 
-    // Save landmarks to SQLite
+    
     if (landmarks.length > 0) {
       await this.landmarksRepository.save(landmarks);
     } else {
       await this.landmarksRepository.save({ lat, lng });
     }
 
-    // Cache the results
+    
     await this.cacheService.set(cacheKey, landmarks);
 
     return landmarks;
@@ -45,31 +45,20 @@ export class LandmarksService {
   async getLandmarks(getLandmarksDto: GetLandmarksDto) {
     const { lat, lng } = getLandmarksDto;
     const cacheKey = `landmarks:${lat}:${lng}`;
-  
-    // Step 1: Check the cache
+
+    
     const cachedLandmarks = await this.cacheService.get(cacheKey);
     if (cachedLandmarks) {
-      return cachedLandmarks; // Return cached data
+      return cachedLandmarks;
     }
-  
-    // Step 2: Check the database
-    const dbLandmarks = await this.landmarksRepository.find({ where: { lat, lng } });
-    if (dbLandmarks.length > 0) {
-      await this.cacheService.set(cacheKey, dbLandmarks); // Cache the data
-      return dbLandmarks; // Return data from the database
+
+    
+    const landmarks = await this.landmarksRepository.find({ where: { lat, lng } });
+    
+    if (landmarks.length > 0) {
+      await this.cacheService.set(cacheKey, landmarks);
     }
-  
-    // Step 3: Call the Overpass API if data is not in cache or database
-    const apiLandmarks = await this.overpassService.getNearbyLandmarks(lat, lng);
-    if (apiLandmarks.length > 0) {
-      await this.landmarksRepository.save(apiLandmarks); // Save to the database
-      await this.cacheService.set(cacheKey, apiLandmarks); // Cache the data
-      return apiLandmarks; // Return data from the API
-    }
-  
-    // Step 4: No landmarks found
-    await this.landmarksRepository.save({ lat, lng }); // Save coordinates to the database
-    await this.cacheService.set(cacheKey, []); // Cache an empty array
-    return []; // Return an empty array
+
+    return landmarks;
   }
 }

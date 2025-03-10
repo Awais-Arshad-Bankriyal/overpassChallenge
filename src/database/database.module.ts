@@ -12,8 +12,8 @@ import { Landmark } from '../landmarks/entities/landmark.entity';
         type: 'sqlite',
         database: configService.get<string>('database.database', 'landmarks.db'),
         entities: [Landmark],
-        synchronize: true, // Automatically create database schema (for development only)
-        logging: true, // Log SQL queries
+        synchronize: true, 
+        logging: true, 
       }),
     }),
   ],

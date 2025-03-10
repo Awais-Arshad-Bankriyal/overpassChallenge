@@ -4,8 +4,8 @@ import { HttpModule } from '@nestjs/axios';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [HttpModule, ConfigModule], // HttpModule is used for making HTTP requests
+  imports: [HttpModule, ConfigModule], 
   providers: [OverpassService],
-  exports: [OverpassService], // Export the service so it can be used in other modules
+  exports: [OverpassService], 
 })
 export class OverpassModule {}

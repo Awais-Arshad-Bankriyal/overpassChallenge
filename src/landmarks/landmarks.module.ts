@@ -8,8 +8,8 @@ import { CacheModule } from '../cache/cache.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Landmark]), // Register Landmark entity
-    OverpassModule, // Import OverpassModule
+    TypeOrmModule.forFeature([Landmark]),
+    OverpassModule,
     CacheModule,
   ],
   controllers: [LandmarksController],

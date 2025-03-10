@@ -1,16 +1,18 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { HttpExceptionFilter } from './common/filters/global-error-handling';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(
     new ValidationPipe({
-      transform: true, // Enable automatic transformation
-      whitelist: true, // Strip non-whitelisted properties
-      forbidNonWhitelisted: true, // Throw errors for non-whitelisted properties
+      transform: true, 
+      whitelist: true, 
+      forbidNonWhitelisted: true, 
     }),
   );
-  await app.listen(3002);
+  app.useGlobalFilters(new HttpExceptionFilter());
+  await app.listen(3003);
 }
 bootstrap();

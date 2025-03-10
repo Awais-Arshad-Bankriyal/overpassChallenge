@@ -12,12 +12,12 @@ export class CacheService {
     if (cachedItem && cachedItem.expiresAt > Date.now()) {
       return cachedItem.data;
     }
-    this.cache.delete(key); // Remove expired cache
+    this.cache.delete(key); 
     return null;
   }
 
   async set(key: string, value: any): Promise<void> {
-    const ttl = this.configService.get<number>('cacheTtl', 3600); // Default TTL: 1 hour
+    const ttl = this.configService.get<number>('cacheTtl', 3600); 
     const expiresAt = Date.now() + ttl * 1000;
     this.cache.set(key, { data: value, expiresAt });
   }

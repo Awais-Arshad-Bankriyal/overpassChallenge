@@ -12,7 +12,7 @@ export class OverpassService {
 
   async getNearbyLandmarks(lat: number, lng: number) {
    
-    const overpassUrl = this.configService.get<string>('overpassUrl', 'https://overpass-api.de/api/interpreter'); // Default Overpass URL
+    const overpassUrl = this.configService.get<string>('overpassUrl', 'https://overpass-api.de/api/interpreter'); 
     const query = `[out:json];
       (
         way["tourism"="attraction"](around:1000,${lat},${lng});
