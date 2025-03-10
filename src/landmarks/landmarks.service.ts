@@ -45,21 +45,31 @@ export class LandmarksService {
   async getLandmarks(getLandmarksDto: GetLandmarksDto) {
     const { lat, lng } = getLandmarksDto;
     const cacheKey = `landmarks:${lat}:${lng}`;
-
-    // Check cache first
+  
+    // Step 1: Check the cache
     const cachedLandmarks = await this.cacheService.get(cacheKey);
     if (cachedLandmarks) {
-      return cachedLandmarks;
+      return cachedLandmarks; // Return cached data
     }
-
-    // Fetch landmarks from SQLite
-    const landmarks = await this.landmarksRepository.find({ where: { lat, lng } });
-
-    // Cache the results
-    if (landmarks.length > 0) {
-      await this.cacheService.set(cacheKey, landmarks);
+  
+    // Step 2: Check the database
+    const dbLandmarks = await this.landmarksRepository.find({ where: { lat, lng } });
+    if (dbLandmarks.length > 0) {
+      await this.cacheService.set(cacheKey, dbLandmarks); // Cache the data
+      return dbLandmarks; // Return data from the database
     }
-
-    return landmarks;
+  
+    // Step 3: Call the Overpass API if data is not in cache or database
+    const apiLandmarks = await this.overpassService.getNearbyLandmarks(lat, lng);
+    if (apiLandmarks.length > 0) {
+      await this.landmarksRepository.save(apiLandmarks); // Save to the database
+      await this.cacheService.set(cacheKey, apiLandmarks); // Cache the data
+      return apiLandmarks; // Return data from the API
+    }
+  
+    // Step 4: No landmarks found
+    await this.landmarksRepository.save({ lat, lng }); // Save coordinates to the database
+    await this.cacheService.set(cacheKey, []); // Cache an empty array
+    return []; // Return an empty array
   }
 }

@@ -11,24 +11,25 @@ export class OverpassService {
   ) {}
 
   async getNearbyLandmarks(lat: number, lng: number) {
-    const overpassUrl = this.configService.get<string>('overpassUrl');
+   
+    const overpassUrl = this.configService.get<string>('overpassUrl', 'https://overpass-api.de/api/interpreter'); // Default Overpass URL
     const query = `[out:json];
       (
-        way["tourism"="attraction"](around:500,${lat},${lng});
+        way["tourism"="attraction"](around:1000,${lat},${lng});
         relation["tourism"="attraction"](around:500,${lat},${lng});
       );
       out body;
       >;
       out skel qt;`;
-
+  
     try {
+      
       const response = await firstValueFrom(
         this.httpService.post(overpassUrl, query, {
-          headers: { 'Content-Type': 'text/plain' },
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         }),
       );
-
-      // Transform the Overpass API response into a simpler format
+      
       return response.data.elements.map((element) => ({
         lat,
         lng,

@@ -20,6 +20,7 @@ export class LandmarksController {
   
   @Get()
   async getLandmarks(@Query() getLandmarksDto: GetLandmarksDto) { // Validates the query parameters
+    
     return this.landmarksService.getLandmarks(getLandmarksDto);
   }
 }
