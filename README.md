@@ -30,20 +30,21 @@ src/
 ├── config/
 │   └── configuration.ts
 ├── database/
-│   ├── migrations/
 │   └── database.module.ts
 ├── landmarks/
 │   ├── dto/
 │   ├── entities/
 │   ├── landmarks.controller.ts
+│   ├── landmarks.controller.spec.ts
 │   ├── landmarks.module.ts
-│   ├── landmarks.service.ts
-│   └── landmarks.repository.ts
+│   ├──landmarks.service.ts
+│   └──  landmarks.service.spec.ts
 ├── overpass/
 │   ├── overpass.module.ts
 │   ├── overpass.service.ts
-│   └── interfaces/
+│   └── overpass.service.spec.ts
 └── cache/
+    ├── entities/
     ├── cache.module.ts
     └── cache.service.ts
 ```
@@ -60,7 +61,7 @@ src/
 
 ```bash
 git clone <repository-url>
-cd <dir>
+cd nestjs-overpass-challenge
 ```
 
 ### Install Dependencies
@@ -148,7 +149,5 @@ curl "http://localhost:3000/landmarks?lat=48.858844&lng=2.294351"
 
 Ensure caching is working by observing faster responses after the initial request.
 
-## License
 
-This project is open-source under the MIT License.
 
