@@ -8,7 +8,7 @@ import { ConfigService } from '@nestjs/config';
 export class LandmarksController {
   constructor(
     private readonly landmarksService: LandmarksService,
-    private configService: ConfigService, // Inject ConfigService
+    private configService: ConfigService, 
   ) {}
 
   @Post('webhook')

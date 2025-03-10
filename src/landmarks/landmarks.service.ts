@@ -20,36 +20,55 @@ export class LandmarksService {
     private readonly cacheService: CacheService,
     private readonly configService: ConfigService,
   ) {
-    this.cacheTtl = this.configService.get<number>('CACHE_TTL', 3600);
+    this.cacheTtl = this.configService.get<number>('CACHE_TTL', 3600); 
   }
 
+  /**
+   * Create or fetch landmarks for the given coordinates.
+   * @param createLandmarkDto - DTO containing latitude and longitude.
+   * @returns List of landmarks.
+   */
   async createLandmark(createLandmarkDto: CreateLandmarkDto) {
     const { lat, lng } = createLandmarkDto;
     const cacheKey = `landmarks:${lat}:${lng}`;
-
+  
     this.logger.log(`Checking cache for ${cacheKey}`);
     const cachedLandmarks = await this.cacheService.get(cacheKey);
     if (cachedLandmarks) {
       this.logger.log(`Cache hit for ${cacheKey}`);
       return cachedLandmarks;
     }
-
+  
     try {
       this.logger.log(`Fetching Overpass API for ${lat}, ${lng}`);
       const rawLandmarks = await this.overpassService.getNearbyLandmarks(lat, lng);
-      const validLandmarks = rawLandmarks.filter(l => l.name && l.type);
-
+      
+      // Map rawLandmarks to Landmark instances
+      const validLandmarks = rawLandmarks
+        .filter((l) => l.name && l.type)
+        .map((landmark) => {
+          const landmarkEntity = new Landmark();
+          landmarkEntity.lat = lat;
+          landmarkEntity.lng = lng;
+          landmarkEntity.name = landmark.name;
+          landmarkEntity.type = landmark.type;
+          return landmarkEntity;
+        });
+  
       if (validLandmarks.length) {
         await this.landmarksRepository.save(validLandmarks);
         this.logger.log(`Saved ${validLandmarks.length} landmarks to database`);
       } else {
-        await this.landmarksRepository.save({ lat, lng });
+        const coordinateEntity = new Landmark();
+        coordinateEntity.lat = lat;
+        coordinateEntity.lng = lng;
+        await this.landmarksRepository.save(coordinateEntity);
         this.logger.warn(`No landmarks found for ${lat}, ${lng}, saved coordinates only`);
       }
-
+  
       await this.cacheService.set(cacheKey, validLandmarks, this.cacheTtl);
       this.logger.log(`Cached landmarks for ${cacheKey}`);
-
+  
       return validLandmarks;
     } catch (error) {
       this.logger.error(`Overpass API request failed: ${error.message}`);
@@ -57,10 +76,16 @@ export class LandmarksService {
     }
   }
 
+  /**
+   * Get landmarks for the given coordinates.
+   * @param getLandmarksDto - DTO containing latitude and longitude.
+   * @returns List of landmarks.
+   */
   async getLandmarks(getLandmarksDto: GetLandmarksDto) {
     const { lat, lng } = getLandmarksDto;
     const cacheKey = `landmarks:${lat}:${lng}`;
 
+ 
     this.logger.log(`Fetching landmarks for ${cacheKey}`);
     const cachedLandmarks = await this.cacheService.get(cacheKey);
     if (cachedLandmarks) {
@@ -68,13 +93,16 @@ export class LandmarksService {
       return cachedLandmarks;
     }
 
+   
     const dbLandmarks = await this.landmarksRepository.find({ where: { lat, lng } });
     if (dbLandmarks.length) {
+     
       await this.cacheService.set(cacheKey, dbLandmarks, this.cacheTtl);
       this.logger.log(`Cached ${dbLandmarks.length} landmarks for ${cacheKey}`);
       return dbLandmarks;
     }
 
+    
     this.logger.warn(`No landmarks found for ${lat}, ${lng}`);
     return [];
   }

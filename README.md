@@ -1,99 +1,198 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+NestJS Overpass API Integration with Redis Caching and SQLite
+This project demonstrates a NestJS application that integrates with the Overpass API to fetch nearby landmarks based on provided coordinates. It utilizes Redis for caching and SQLite for persistent data storage.​
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Features
+Protected webhook endpoint to receive coordinates.​
+Integration with the Overpass API to retrieve nearby landmarks.​
+Storage of landmarks in a SQLite database.​
+Stack Overflow
+Caching mechanisms implemented using Redis.​
+Endpoints to retrieve cached or stored landmark data.​
+Bitbucket
+Prerequisites
+Node.js (version 14.x or higher)​
+npm (version 6.x or higher)​
+Redis server​
+docs.nestjs.com
++6
+github.com
++6
+Restack
++6
+SQLite​
+Installation
+Clone the repository:
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+bash
+Copy
+Edit
+git clone <repository_url>
+Navigate to the project directory:
 
-## Description
+bash
+Copy
+Edit
+cd <project_directory>
+Install dependencies:
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+bash
+Copy
+Edit
+npm install
+Set up environment variables:
 
-## Project setup
+Create a .env file in the root directory.​
 
-```bash
-$ npm install
-```
+Define necessary environment variables:​
 
-## Compile and run the project
+env
+Copy
+Edit
+PORT=3000
+REDIS_HOST=localhost
+REDIS_PORT=6379
+DATABASE_URL=sqlite:./database.sqlite
+AUTH_SECRET=your_secret_key
+Database Migration
+If your project uses TypeORM or another ORM that supports migrations, run the following command to apply migrations:​
 
-```bash
-# development
-$ npm run start
+bash
+Copy
+Edit
+npm run typeorm migration:run
+​Adjust the command based on your project's configuration.​
 
-# watch mode
-$ npm run start:dev
+Running the Application
+To start the application, use the following commands:
 
-# production mode
-$ npm run start:prod
-```
+Development mode with hot-reloading:
 
-## Run tests
+bash
+Copy
+Edit
+npm run start:dev
+Production mode:
 
-```bash
-# unit tests
-$ npm run test
+bash
+Copy
+Edit
+npm run start:prod
+API Endpoints
+POST /webhook
+Description: Receives coordinates and processes them.​
 
-# e2e tests
-$ npm run test:e2e
+Headers:
 
-# test coverage
-$ npm run test:cov
-```
+Authorization: Bearer <your_secret_key>​
+Body:
 
-## Deployment
+json
+Copy
+Edit
+{
+  "lat": 48.8584,
+  "lng": 2.2945
+}
+Response:
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+201 Created on success.​
+GitLab Taskgrids
++6
+github.com
++6
+Restack
++6
+400 Bad Request for validation errors.​
+401 Unauthorized for missing or invalid authorization.​
+GET /landmarks
+Description: Retrieves landmarks based on provided coordinates.​
+Query Parameters:
+lat: Latitude of the location.​
+lng: Longitude of the location.​
+Response:
+200 OK with landmark data.​
+Restack
++2
+Toimc Git
++2
+github.com
++2
+400 Bad Request for validation errors.​
+Error Handling
+The application gracefully handles errors, including:​
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+Invalid input data.​
+Overpass API errors.​
+Database errors.​
+Testing
+To run tests, use the following command:
 
-```bash
-$ npm install -g mau
-$ mau deploy
-```
+bash
+Copy
+Edit
+npm run test
+You can also test endpoints using curl or a REST client:​
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+POST /webhook:
 
-## Resources
+bash
+Copy
+Edit
+curl -X POST -H "Content-Type: application/json" \
+-H "Authorization: Bearer your_secret_key" \
+-d '{"lat":48.8584,"lng":2.2945}' \
+http://localhost:3000/webhook
+GET /landmarks:
 
-Check out a few resources that may come in handy when working with NestJS:
+bash
+Copy
+Edit
+curl "http://localhost:3000/landmarks?lat=48.8584&lng=2.2945"
+Linting and Formatting
+The project uses the following tools for code quality:​
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+ESLint: For linting.​
+Prettier: For code formatting.​
+To run linting and formatting checks, use:
 
-## Support
+bash
+Copy
+Edit
+npm run lint
+npm run format
+Project Structure
+The project's directory structure is organized as follows:​
+Restack
++1
+Restack
++1
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+arduino
+Copy
+Edit
+src/
+├── app.module.ts
+├── main.ts
+├── common/
+├── config/
+│   └── configuration.ts
+├── database/
+│   ├── migrations/
+│   └── database.module.ts
+├── landmarks/
+│   ├── dto/
+│   ├── entities/
+│   │   └── landmark.entity.ts
+│   ├── interfaces/
+│   ├── landmarks.controller.ts
+│   ├── landmarks.module.ts
+│   ├── landmarks.service.ts
+│   └── landmarks.repository.ts
+├── overpass/
+│   ├── overpass.module.ts
+│   ├── overpass.service.ts
+│   └── interfaces/
+└── cache/
+    ├── cache.module.ts
+    └── cache.service.ts
+This structure promotes modularity and maintainability, adhering to best practices in NestJS development.
